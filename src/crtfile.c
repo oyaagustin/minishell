@@ -4,20 +4,12 @@
 #include <sys/wait.h>
 
 void crtfile(char *fileName) {
-    pid_t pid = fork();
-    if (pid == -1) {
-        perror("Error en el proceso crtfile");
+    FILE *file = fopen(fileName, "w");
+    if (file == NULL) { 
+        perror("Error al crear el archivo");
         return;
     }
-
-    if (pid == 0) {
-        execlp("touch", "touch", fileName, (char *)NULL);
-        perror("Error al intentar crear el archivo");
-        exit(EXIT_FAILURE); 
-    } else {
-        wait(NULL);
-        printf("Archivo '%s' creado con éxito.\n", fileName);
-    }
+    fclose(file); 
 }
 
 int main(int argc, char *argv[]) {

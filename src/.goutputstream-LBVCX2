@@ -21,25 +21,14 @@ int main() {
             break;
         }
 
-        // Calcular el tamaño necesario para la ruta
-        size_t ruta_len = strlen("./src/") + strlen(comando) + 1;
-        char *ruta = malloc(ruta_len);
-        if (!ruta) {
-            perror("malloc");
-            free(comando);
-            exit(EXIT_FAILURE);
-        }
-
-        // Construir la ruta completa
-        strcpy(ruta, "./");
-        strcat(ruta, comando);
-
+        // Crea la ruta (Pendiente)
+        
+        
         // Crear un proceso hijo para ejecutar el comando con execv
         pid_t pid = fork();
         if (pid == 0) {
             char *args[] = {ruta, NULL};
             execv(ruta, args);
-            printf("%s",ruta);
             perror("execv");
             exit(EXIT_FAILURE);
         } 
