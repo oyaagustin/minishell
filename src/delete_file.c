@@ -16,23 +16,13 @@ void delete_file(char *dirName){
         return;
     }
 
-    pid_t pid = fork();
-    if (pid == -1) {
-        perror("Error al crear el proceso delete");
-        return;
-    }
-
-    if (pid == 0) {
-        // Proceso hijo ejecuta 'rm' para eliminar el archivo o directorio
-        execlp("rm", "rm", "-ri", dirName, (char *)NULL);
-        perror("Error al intentar eliminar");
-        exit(EXIT_FAILURE);
+    if (rmdir(dirName) == 0) {
+        printf("El directorio '%s' fue eliminado exitosamente.\n", dirName);
     } else {
-        // Proceso padre espera a que el hijo termine
-        wait(NULL);
-        printf("\nOperación finalizada con éxito. \n");
+        perror("Error al intentar eliminar el directorio");
     }
 
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
