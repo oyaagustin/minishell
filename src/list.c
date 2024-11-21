@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#include <dirent.h>
 #include "utils.h"
 
 void list(char *dirName) {
+    //Expansión del directorio home
     char *expanded;
     if (strlen(dirName) == 0) {
         expanded = expand_home("~");
@@ -19,25 +19,27 @@ void list(char *dirName) {
     }
 
     if (expanded == NULL) return;
-
-    pid_t pid = fork();
-    if (pid == -1) {
-        perror("Error al crear el proceso hijo");
+    
+    //Utilización de dirent para listar el contenido del directorio
+    DIR *dir = opendir(expanded);
+    if (dir == NULL) {
+        perror("No se pudo abrir el directorio");
         free(expanded);
         return;
     }
 
-    if (pid == 0) {
-        // Preparamos los argumentos para execv
-        char *args[] = {"ls", "-1", expanded, NULL}; // Lista de argumentos para el comando
-
-        execv("/bin/ls", args); // Ruta absoluta de ls para usar execv
-        perror("Error al ejecutar list");
-        exit(EXIT_FAILURE);
-    } else {
-        wait(NULL);
+    struct dirent *content;
+    while ((content = readdir(dir)) != NULL) {
+        if (strcmp(content->d_name, ".") == 0 || strcmp(content->d_name, "..") == 0){
+            continue;
+        }
+        printf("- %s\n", content->d_name);
     }
 
+    if (closedir(dir) != 0) {
+        perror("Error al cerrar el directorio");
+    }
+    
     free(expanded);
 }
 

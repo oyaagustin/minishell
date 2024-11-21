@@ -1,25 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
 
-void read_file(char *fileName){
-    pid_t pid = fork();
-    if (pid == -1) {
-        perror("Error al crear el proceso read");
+void read_file(char *fileName) {
+    FILE *file = fopen(fileName, "r");
+    if (file == NULL) {
+        perror("Error al abrir el archivo");
         return;
     }
 
-    if (pid == 0) {
-        // Proceso hijo ejecuta 'cat' para mostrar el contenido del archivo
-        execlp("cat", "cat", fileName, (char *)NULL);
-        perror("Error al intentar leer el archivo");
-        exit(EXIT_FAILURE);
-    } else {
-        wait(NULL);
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    while ((read = getline(&line, &len, file)) != -1) {
+        printf("%s", line);
     }
-   
+
+    free(line);
+    if (fclose(file) != 0) {
+        perror("Error al cerrar el archivo");
+    }
 }
+
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
