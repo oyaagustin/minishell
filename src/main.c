@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include "utils.h"
 
-#define COMMANDS_DIR "./"  // Changed from "./bin/" since we're already in the bin directory when running
+#define COMMANDS_DIR "./" 
 
 int main() {
     char *input = NULL;
